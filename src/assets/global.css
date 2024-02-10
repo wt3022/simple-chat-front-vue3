@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Noto Sans JP', sans-serif;
+  touch-action: pan-x pan-y;
+  font-weight: 500;
+}
+
+/* PC View のときのスタイル */
+@media (hover: hover) {
+  body,
+  footer.v-footer,
+  header.header,
+  .v-dialog--fullscreen > .v-card.v-sheet {
+    max-width: 480px;
+    margin: 0 auto !important;
+    min-width: auto !important;
+  }
+  .v-dialog.v-dialog--fullscreen {
+    background-color: white;
+  }
+}

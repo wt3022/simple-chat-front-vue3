@@ -22,9 +22,9 @@ interface RefreshResponse {
 }
 
 class AuthService {
-  async login(body: { email: string; password: string }) {
+  async login() {
     await axiosClient
-      .post('/auth/login/', body)
+      .post('/auth/login/', {email: "admin@example.com", password: "hogehoge"})
       .then((res) => {
         const resBody = res.data as LoginResponse
         useAuthStore.accessToken = resBody.access
@@ -33,7 +33,6 @@ class AuthService {
       })
       .catch((err: AxiosError) => {
         console.log(err)
-        console.log(err.message)
       })
   }
 

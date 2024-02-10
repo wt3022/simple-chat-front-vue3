@@ -3,7 +3,7 @@ import App from '@/App.vue'
 import { piniaStore } from '@/stores'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
-import './styles/index.css'
+import './assets/global.css'
 
 loadFonts()
 
