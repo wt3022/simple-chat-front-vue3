@@ -25,36 +25,31 @@
   import { defineComponent } from 'vue'
   import { authService } from './apis/services/auth'
   import { chatMessageService } from './apis/services/chatMessages'
+  import { ChatMessage, ChatMessageRequest } from './schema/_generated/API'
 
   export default defineComponent({
     name: 'App',
     data() {
       return {
         text: '',
-        items: [],
+        items: [] as ChatMessage[],
       }
     },
     async created() {
       await authService.login()
 
       const messages = await chatMessageService.list()
-      this.items = messages.results.map((message: any) => {
-        return { id: message.id, text: message.text }
-      })
+      this.items = messages.results!
     },
     methods: {
-      getNextId() {
-        const items = this.items
-        if (items.length === 0) {
-          return 1
-        }
-        return items[items.length - 1].id + 1
-      },
-
       async sendChat() {
-        const message = await chatMessageService.create({ text: this.text })
+        const body: ChatMessageRequest = {
+          text: this.text,
+        }
 
-        this.items.push({ id: message.id, text: message.text })
+        const message = await chatMessageService.create(body)
+
+        this.items.push(message)
         this.text = ''
       },
 

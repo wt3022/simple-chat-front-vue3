@@ -1,13 +1,15 @@
-import axios from 'axios'
 import { useAuthStore } from '@/stores/auth.ts'
+import { Api } from '@/schema/_generated/API'
 
 const BaseURL = import.meta.env.VITE_APP_API_BASE_URL
 
-const axiosInstance = axios.create({
+// 参考
+// https://zenn.dev/taksnr/articles/2167a25cb31295
+const api = new Api({
   baseURL: BaseURL,
 })
 
-axiosInstance.interceptors.request.use((config) => {
+api.instance.interceptors.request.use((config) => {
   if (!useAuthStore.accessToken) return config
   if (!useAuthStore.refreshToken) return config
 
@@ -15,4 +17,12 @@ axiosInstance.interceptors.request.use((config) => {
   return config
 })
 
-export const axiosClient = axiosInstance
+api.instance.interceptors.response.use(
+  (response) => response,
+  (error) =>
+    Promise.reject(
+      (error.response && error.response.data) || 'Something went wrong',
+    ),
+)
+
+export const axiosClient = api

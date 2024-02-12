@@ -7,7 +7,10 @@
     "build": "vite build",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,ts,vue}\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "schema": "yarn schema-dl && yarn schema-gen",
+    "schema-dl": "curl -o ./src/schema/schema.yml http://localhost:3300/api/schema/",
+    "schema-gen": "./node_modules/swagger-typescript-api/index.js --axios --route-types -p ./src/schema/schema.yml -o ./src/schema/_generated -n API.ts"
   },
   "dependencies": {
     "@aspida/axios": "^1.14.0",
@@ -29,6 +32,7 @@
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
     "prettier": "^3.0.2",
+    "swagger-typescript-api": "^13.0.3",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",

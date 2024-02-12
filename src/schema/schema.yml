@@ -1,0 +1,727 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/schema/:
+    get:
+      operationId: apiSchemaRetrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /auth/login/:
+    post:
+      operationId: authLoginCreate
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWT'
+          description: ''
+  /auth/logout/:
+    post:
+      operationId: authLogoutCreate
+      description: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+
+        Accepts/Returns nothing.
+      tags:
+      - auth
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /auth/registration/:
+    post:
+      operationId: authRegistrationCreate
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /auth/registration/resend-email/:
+    post:
+      operationId: authRegistrationResendEmailCreate
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerificationRequest'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /auth/registration/verify-email/:
+    post:
+      operationId: authRegistrationVerifyEmailCreate
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /auth/token/refresh/:
+    post:
+      operationId: authTokenRefreshCreate
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /auth/token/verify/:
+    post:
+      operationId: authTokenVerifyCreate
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+        required: true
+      responses:
+        '200':
+          description: No response body
+  /chat_messages/:
+    get:
+      operationId: chatMessagesList
+      parameters:
+      - in: query
+        name: latest_timestamp
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - chat_messages
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChatMessageList'
+          description: ''
+    post:
+      operationId: chatMessagesCreate
+      tags:
+      - chat_messages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageRequest'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+          description: ''
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        createdBy:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: 作成日時
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: 更新日時
+        text:
+          type: string
+          title: テキスト
+          maxLength: 2048
+      required:
+      - createdAt
+      - createdBy
+      - id
+      - text
+      - updatedAt
+    ChatMessageRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: テキスト
+          maxLength: 2048
+      required:
+      - text
+    JWT:
+      type: object
+      description: Serializer for JWT authentication.
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserDetails'
+      required:
+      - access
+      - refresh
+      - user
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+      required:
+      - password
+    PaginatedChatMessageList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          minLength: 1
+        password1:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password2:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - password1
+      - password2
+    ResendEmailVerificationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - email
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    TokenVerifyRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - token
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        password:
+          type: string
+          title: パスワード
+          maxLength: 128
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+          title: 最終ログイン
+        isSuperuser:
+          type: boolean
+          title: スーパーユーザー権限
+          description: 全ての権限を持っているとみなされます。
+        username:
+          type: string
+          title: ユーザー名
+          description: この項目は必須です。半角アルファベット、半角数字、@/./+/-/_ で150文字以下にしてください。
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        firstName:
+          type: string
+          title: 名
+          maxLength: 150
+        lastName:
+          type: string
+          title: 姓
+          maxLength: 150
+        isStaff:
+          type: boolean
+          title: スタッフ権限
+          description: ユーザーが管理サイトにログイン可能かどうかを示します。
+        isActive:
+          type: boolean
+          title: 有効
+          description: ユーザーがアクティブかどうかを示します。アカウントを削除する代わりに選択を解除してください。
+        dateJoined:
+          type: string
+          format: date-time
+          title: 登録日
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: 作成日時
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: 更新日時
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        groups:
+          type: array
+          items:
+            type: integer
+            title: グループ
+          title: グループ
+          description: このユーザーが所属するグループ。ユーザーはそれぞれのグループに付与されたすべての権限を持ちます。
+        userPermissions:
+          type: array
+          items:
+            type: integer
+            title: ユーザーパーミッション
+          title: ユーザーパーミッション
+          description: このユーザーの持つ権限です。
+      required:
+      - createdAt
+      - id
+      - password
+      - updatedAt
+      - username
+    UserDetails:
+      type: object
+      description: User model w/o password
+      properties:
+        pk:
+          type: string
+          format: uuid
+          readOnly: true
+          title: Id
+        username:
+          type: string
+          title: ユーザー名
+          description: この項目は必須です。半角アルファベット、半角数字、@/./+/-/_ で150文字以下にしてください。
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+        firstName:
+          type: string
+          title: 名
+          maxLength: 150
+        lastName:
+          type: string
+          title: 姓
+          maxLength: 150
+      required:
+      - email
+      - pk
+      - username
+    UserRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 1
+          title: パスワード
+          maxLength: 128
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+          title: 最終ログイン
+        isSuperuser:
+          type: boolean
+          title: スーパーユーザー権限
+          description: 全ての権限を持っているとみなされます。
+        username:
+          type: string
+          minLength: 1
+          title: ユーザー名
+          description: この項目は必須です。半角アルファベット、半角数字、@/./+/-/_ で150文字以下にしてください。
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        firstName:
+          type: string
+          title: 名
+          maxLength: 150
+        lastName:
+          type: string
+          title: 姓
+          maxLength: 150
+        isStaff:
+          type: boolean
+          title: スタッフ権限
+          description: ユーザーが管理サイトにログイン可能かどうかを示します。
+        isActive:
+          type: boolean
+          title: 有効
+          description: ユーザーがアクティブかどうかを示します。アカウントを削除する代わりに選択を解除してください。
+        dateJoined:
+          type: string
+          format: date-time
+          title: 登録日
+        email:
+          type: string
+          format: email
+          nullable: true
+          minLength: 1
+          maxLength: 254
+        groups:
+          type: array
+          items:
+            type: integer
+            title: グループ
+          title: グループ
+          description: このユーザーが所属するグループ。ユーザーはそれぞれのグループに付与されたすべての権限を持ちます。
+        userPermissions:
+          type: array
+          items:
+            type: integer
+            title: ユーザーパーミッション
+          title: ユーザーパーミッション
+          description: このユーザーの持つ権限です。
+      required:
+      - password
+      - username
+    VerifyEmailRequest:
+      type: object
+      properties:
+        key:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - key
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
